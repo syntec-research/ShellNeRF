@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="A Hybrid Representation for Photorealistic Synthesis, Animation and Relighting of Human Eyes">
+  <meta name="keywords" content="EyeNeRF, Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShellNeRF: Learning a Controllable High-resolution Model of the Eye and Periocular Region</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">ShellNeRF: Learning a Controllable High-resolution Model of the Eye and Periocular Region</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://ait.ethz.ch/people/lig/">Gengyan Li</a><sup>1, 2</sup>,</span>
+			<span class="author-block">
+              <a href="https://krips89.github.io/profile_page/">Kripasindhu Sarkar</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.meka.page/">Abhimitra Meka</a><sup>2</sup>,</span>
+			<span class="author-block">
+              <a href="https://ait.ethz.ch/people/buehler/">Marcel C. Bühler</a><sup>1, 2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://franziska-mueller.github.io/">Franziska Müller</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.paulogotardo.com/">Paulo Gotardo</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://ait.ethz.ch/people/hilliges/">Otmar Hilliges</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://thabobeeler.com/">Thabo Beeler</a><sup>2</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>ETH Zürich,</span>
+            <span class="author-block"><sup>2</sup>Google</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="static/ShellNeRF_Final.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>PDF</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="."
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-doi"></i>
+                  </span>
+                  <span>DOI/Wiley</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="."
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="static/images/teaser1024_1.png"  class="center"/>
+      <h2 class="subtitle has-text-centered">
+        We present ShellNeRF - a novel method for high-resolution novel view synthesis and animation of the periocular face region. Our
+method allows for controlling expressions and eye gaze and renders novel views at an unprecedented level of detail.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+			Eye gaze and expressions are crucial non-verbal signals in face-to-face communication. Visual effects and telepresence demand
+			significant improvements in personalized tracking, animation, and synthesis of the eye region to achieve true immersion.
+			Morphable face models, in combination with coordinate-based neural volumetric representations, show promise in solving the
+			difficult problem of reconstructing intricate geometry (eyelashes) and synthesizing photorealistic appearance variations (wrinkles and specularities) of eye performances. We propose a novel hybrid representation - ShellNeRF - that builds a discretized
+			volume around a 3DMM face mesh using concentric surfaces to model the deformable ‘periocular’ region. We define a canonical
+			space using the UV layout of the shells that constrains the space of dense correspondence search. Combined with an explicit
+			eyeball mesh for modeling corneal light-transport, our model allows for animatable photorealistic 3D synthesis of the whole eye
+			region. Using multi-view video input, we demonstrate significant improvements over state-of-the-art in expression re-enactment
+			and transfer for high-resolution close-up views of the eye region.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code></pre>
+  </div>
+</section>
+
+<hr style="width:30%; margin: auto;" />
+
+<!-- Novel View -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Novel View Synthesis</h2>
+        <div class="content has-text-justified">
+          <p>
+              We can render the same scene from continuous camera views. Unlike other methods, we ensure multiview consistency and do not "hide" wrinkles and shadows beneath the skin surface. Nerface suffers from high instability and often diverges, as seen in the second subject
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/camera_orbit.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/camera_orbit_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Novel View -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Decomposition</h2>
+        <div class="content has-text-justified">
+          <p>
+              We can also decompose each video into albedo, diffuse shading and specular shading.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&ensp;Albedo &emsp;&emsp;&emsp;&emsp;&emsp; Diffuse &ensp;&emsp;&emsp;&emsp;&emsp; Specular</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/decomposition_1.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&ensp;Albedo &emsp;&emsp;&emsp;&emsp;&emsp; Diffuse &ensp;&emsp;&emsp;&emsp;&emsp; Specular</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/decomposition_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Regazing Videos -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Regazing</h2>
+        <div class="content has-text-justified">
+          <p>
+              Our method can control eye gaze and synthesize novel view directions. Note how our method is significantly sharper and moves smoother than all other competing methods. Mixture of Volumetric Primitives(MVP) requires a projected texture as an input, which is not given for such manipulations. We therefore use a neutral texture as a placeholder. MVP is unable to regaze properly, instead blending from one eye pose to the next. On the other hand, the lack of overall quality  prevents the eyeball in EyeNeRF from being learned correctly for one pose of the first subject, and generally for the second subject.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_regaze.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div> 
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_regaze_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>  
+  </div>
+</div>
+
+<!-- Regazing Videos Orbit -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Regazing with a Moving Camera</h2>
+        <div class="content has-text-justified">
+          <p>
+              We can do the same with a moving camera.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_regaze_orbit.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div> 
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_regaze_orbit_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>  
+  </div>
+</div>
+      
+<!-- Interpolating expressions -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Interpolating Expressions</h2>
+        <div class="content has-text-justified">
+          <p>
+              We interpolate between 13 expressions. Related works struggle to render convincing expressions. For our method, the periocular region smoothly adapts and shows detailed, naturally deforming wrinkles and highly detailed reflections on the eyeball. Again, for MVP we use the neutral texture as a placeholder.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+      	<img src="./static/images/2_interp_0.png" style="transform:rotate(270deg);">
+      </div>    
+      <div class="column">
+      	<img src="./static/images/2_interp_1.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_2.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_3.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_4.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_5.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_6.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_7.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_8.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_9.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_10.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/2_interp_11.png" style="transform:rotate(270deg);">
+      </div>     
+      <div class="column">
+      	<img src="./static/images/2_interp_12.png" style="transform:rotate(270deg);">
+      </div>           
+    </div>  
+  </div>  
+</div>  
+      	
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_expression.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>  
+  </div>  
+</div> 
+
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+      	<img src="./static/images/interp_0.png" style="transform:rotate(270deg);">
+      </div>    
+      <div class="column">
+      	<img src="./static/images/interp_1.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_2.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_3.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_4.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_5.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_6.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_7.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_8.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_9.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_10.png" style="transform:rotate(270deg);">
+      </div>
+      <div class="column">
+      	<img src="./static/images/interp_11.png" style="transform:rotate(270deg);">
+      </div>     
+      <div class="column">
+      	<img src="./static/images/interp_12.png" style="transform:rotate(270deg);">
+      </div>           
+    </div>  
+  </div>  
+</div>  
+
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_expression_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>  
+  </div>  
+</div> 
+
+
+<!-- Interpolating expressions Orbit -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Interpolating Expressions with a Moving Camera</h2>
+        <div class="content has-text-justified">
+          <p>
+              We can do also perform interpolation of expressions while moving the camera and maintain 3D consistency throughout the motion. SotA methods struggle with gaze and expression changes and produce significant floaters for novel camera viewpoints.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_expression_orbit.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>   
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/interp_expression_orbit_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
+
+      
+<!-- 3DMM expressions -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">3DMM Expressions</h2>
+        <div class="content has-text-justified">
+          <p>
+              Our shell-based formulation enables fine-grained control via a 3DMM parameters. We show slow-motion renderings of a highly complex expression: a closing eyelid. Only our method and MonoAvatar are capable of this.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/3dmm_reversed.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>   
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">&emsp;&emsp;Ours&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;  MVP &emsp;&emsp;&emsp;&emsp;&emsp;  Nerface + EyeNeRF &emsp;3DMM cond. EyeNeRF &ensp;&emsp;&emsp; MonoAvatar</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/3dmm_reversed_2.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>   
+  </div>
+</div>
+
+      
+<!-- Reenactment -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-centered has-text-centered">
+      <div class="content">
+        <h2 class="title is-3">Reenactment</h2>
+        <div class="content has-text-justified">
+          <p>
+              We show results on expressions unseen during training. In these examples, we extract 3DMM coefficients from the Expression Target (left) and apply them to our target subject on the right. Note how our method faithfully applies the desired expressions. Note that our 3DMM fitting method does not enforce temporal smoothness, resulting in jitter. As we crop our image based on the estimated eye pose, this results in jitter in the GT video as well. Although performs comparably in most situations, it is unable to handle certain expressions which it did not directly see, such as the half open eye in the first expression, resulting in strong artifacting.
+          </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<div class="column is-centered has-text-centered">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">Expression Target&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Ours&ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;MVP&emsp;&emsp;&emsp;&emsp;</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/novel_expression_stable_top.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+    <div class="columns">      
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">Nerface + EyeNeRF&ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;3DMM cond. EyeNeRF&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;MonoAvatar&ensp;&emsp;</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="0rV_rgb" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/novel_expression_stable_bot.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+     
+    <div class="columns">
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">Expression Target&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Ours&ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;MVP&emsp;&emsp;&emsp;&emsp;</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/novel_expression_2_top.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+    <div class="columns">      
+      <div class="column">
+        <div class="content">
+          <h3 class="has-text-centered">Nerface + EyeNeRF&ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;3DMM cond. EyeNeRF&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;MonoAvatar&ensp;&emsp;</h4>
+        </div>
+        <div class="item">
+          <video poster="" id="0rV_rgb" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/novel_expression_2_bot.webm"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/ligETHZ/eyenerf_website" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This webpage is built with the template from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>. We sincerely thank <a href="https://keunhong.com/">Keunhong Park</a> for developing and open-sourcing this template.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
