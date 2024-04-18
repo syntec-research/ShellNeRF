@@ -1,6 +1,6 @@
 # ShellNerf
 
-This is the repository that contains source code for the [ShellNeRF website](https://syntec-research.github.io/shellnerf/).
+This is the repository that contains source code for the [ShellNeRF website](https://syntec-research.github.io/ShellNeRF/).
 
 This webpage (and readme) is built with the template from [NeRFies](https://github.com/nerfies/nerfies.github.io). We sincerely thank Keunhong Park for developing and open-sourcing this template. 
 
